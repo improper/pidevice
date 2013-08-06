@@ -1,7 +1,8 @@
-//execute commands
+// RGB PWM output
+
 var util = require('util')
-var exec = require('child_process').exec;
-var sleep = require('sleep');
+// var exec = require('child_process').exec;
+// var sleep = require('sleep');
 
 var data = [
     {
@@ -15,14 +16,25 @@ var data = [
     }   
   ];
 
+// HTTP routing
+
+exports.setupRoutes = function(app) { 
+  app.get('/switches', switches);
+  app.get('/switches/:id', doSwitch);
+  app.post('/switches', addSwitch);
+  app.put('/switches/:id', editSwitch);
+  app.put('/switches', editAllSwitches);
+  app.delete('/switches/:id', deleteSwitch);
+};
+
 // GET
-exports.switches = function (req, res) {
+function switches(req, res) {
   console.log('Getting switches.');
   var switches = [];
   res.json(data);
 };
 
-exports.switch = function (req, res) {
+function doSwitch(req, res) {
   var id = req.params.id;
   if (id >= 0 && id < data.length) {
     res.json(data[id]);
@@ -32,7 +44,7 @@ exports.switch = function (req, res) {
 };
 
 // POST
-exports.addSwitch = function (req, res) {
+function addSwitch(req, res) {
   var newSwitch = req.body;
   newSwitch.id=data.length;
   newSwitch.url="/switches/"+newSwitch.id;
@@ -43,7 +55,7 @@ exports.addSwitch = function (req, res) {
 };
 
 // PUT
-exports.editSwitch = function (req, res) {
+function editSwitch(req, res) {
   var id = req.params.id;
   if (id >= 0 && id <= data.length) {
     console.log('Switch Status of switch with id: ' + id + " to " + req.body.status);
@@ -58,7 +70,7 @@ exports.editSwitch = function (req, res) {
 };
 
 // PUT
-exports.editAllSwitches = function (req, res) {
+function editAllSwitches(req, res) {
   console.log('Switch Status of all switches to ' + req.body.status);
   for (var i=0;i<data.length;i++){ 
     var script = data[i].script;
@@ -70,7 +82,7 @@ exports.editAllSwitches = function (req, res) {
 };
 
 // DELETE
-exports.deleteSwitch = function (req, res) {
+function deleteSwitch(req, res) {
   var id = req.params.id;
   if (id >= 0 && id < data.length) {
     console.log('Delete switch with id: ' + id);
@@ -81,12 +93,13 @@ exports.deleteSwitch = function (req, res) {
   }
 };
 
+// helpers
 
 function switchStatus(script, command, status){
     var execString = script + " " + command + " " + status;
     console.log("Executing: " + execString);
-    exec(execString, puts);
-    sleep.sleep(1)//sleep for 1 seconds
+    // exec(execString, puts);
+    // sleep.sleep(1)//sleep for 1 seconds
 }
 
 function puts(error, stdout, stderr) { 
