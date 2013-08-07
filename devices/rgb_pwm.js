@@ -8,10 +8,10 @@ var fs    = require('fs'),
 
     data  = [
       {
-        "id": 0, "url": "/leds/0", "name": "LED stripe 1", "red": 0, "green": 0, "blue": 0
+        "id": 0, "url": "/leds/0", "name": "LED stripe 1", "red": 0, "green": 0, "blue": 0, "brightness": 1
       },
       {
-        "id": 1, "url": "/leds/1", "name": "LED stripe 2", "red": 0, "green": 0, "blue": 0
+        "id": 1, "url": "/leds/1", "name": "LED stripe 2", "red": 0, "green": 0, "blue": 0, "brightness": 1
       }
     ],
 
@@ -45,13 +45,19 @@ function setLed(req, res) {
   var id = req.params.id;
   if (id >= 0 && id <= data.length) {
     console.log('Set colour of LED with id: ' + id + " to " + req.body.colour);
-    colour = hexToRgb(req.body.colour);
-    setColour(id, RED, colour.r);
-    setColour(id, GREEN, colour.g);
-    setColour(id, BLUE, colour.b);
-    data[id].red = colour.r;
-    data[id].green = colour.g;
-    data[id].blue = colour.b;
+    var led = data[id];
+    if (req.body.colour !== undefined) {
+      colour = hexToRgb(req.body.colour);
+      led.red = colour.r;
+      led.green = colour.g;
+      led.blue = colour.b;
+    }
+    if (req.body.brightness !== undefined) {
+      led.brightness = Math.max(0, Math.min(1, req.body.brightness));
+    }
+    setColour(id, RED,   led.red * led.brightness);
+    setColour(id, GREEN, led.green * led.brightness);
+    setColour(id, BLUE,  led.blue * led.brightness);
     res.send(200);
   } else {
     res.json(404);
@@ -61,14 +67,27 @@ function setLed(req, res) {
 // PUT
 function setLeds(req, res) {
   console.log('Set colour of all LEDs to ' + req.body.colour);
-  colour = hexToRgb(req.body.colour);
+  var colour,
+      brightness;
+  if (req.body.colour !== undefined) {
+    colour = hexToRgb(req.body.colour);
+  }
+  if (req.body.brightness !== undefined) {
+    brightness = Math.max(0, Math.min(1, req.body.brightness));
+  }
   for (var i=0;i<data.length;i++){ 
-    setColour(i, RED, colour.r);
-    setColour(i, GREEN, colour.g);
-    setColour(i, BLUE, colour.b);
-    data[i].red = colour.r;
-    data[i].green = colour.g;
-    data[i].blue = colour.b;
+    var led = data[i];
+    if (colour !== undefined) {
+      led.red = colour.r;
+      led.green = colour.g;
+      led.blue = colour.b;
+    }
+    if (brightness !== undefined) {
+      led.brightness = brightness;
+    }
+    setColour(i, RED,   led.red * led.brightness);
+    setColour(i, GREEN, led.green * led.brightness);
+    setColour(i, BLUE,  led.blue * led.brightness);
   }
   res.send(200);
 };
