@@ -1,11 +1,10 @@
 {
-  "name": "rcswitch-rest",
-  "description": "RESTful API for rcswitch",
-  "version": "1.0.0",
+  "name": "pidevice",
+  "description": "RESTful API for pi-blaster and other devices",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "express": "3.x",
-    "exec": "0.0.5",
-    "sleep": "1.1.0"
+    "morpheus": "0.6.x"
   }
 }
