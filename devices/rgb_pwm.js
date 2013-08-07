@@ -48,9 +48,9 @@ function setLed(req, res) {
     var led = data[id];
     if (req.body.colour !== undefined) {
       colour = hexToRgb(req.body.colour);
-      led.red = colour.r;
-      led.green = colour.g;
-      led.blue = colour.b;
+      led.red   = Math.round(colour.r * 1000) / 1000;
+      led.green = Math.round(colour.g * 1000) / 1000;
+      led.blue  = Math.round(colour.b * 1000) / 1000;
     }
     if (req.body.brightness !== undefined) {
       led.brightness = Math.max(0, Math.min(1, req.body.brightness));
@@ -78,9 +78,9 @@ function setLeds(req, res) {
   for (var i=0;i<data.length;i++){ 
     var led = data[i];
     if (colour !== undefined) {
-      led.red = colour.r;
-      led.green = colour.g;
-      led.blue = colour.b;
+      led.red   = Math.round(colour.r * 1000) / 1000;
+      led.green = Math.round(colour.g * 1000) / 1000;
+      led.blue  = Math.round(colour.b * 1000) / 1000;
     }
     if (brightness !== undefined) {
       led.brightness = brightness;
