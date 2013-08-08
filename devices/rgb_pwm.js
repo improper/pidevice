@@ -1,7 +1,7 @@
 // RGB PWM output
 
-var fs     = require('fs'),
-    shifty = require('../shifty'),
+var fs        = require('fs'),
+    Tweenable = require('../shifty'),
 
     RED      = 0,
     GREEN    = 1,
@@ -48,6 +48,7 @@ function listLeds(req, res) {
   res.json(data);
 };
 
+// GET
 function showLed(req, res) {
   var id = req.params.id;
   if (id >= 0 && id < data.length) {
@@ -96,7 +97,7 @@ function fadeLed(ledId) {
   if (led.activeTween) {
     led.activeTween.stop();
   }
-  led.activeTween = new shifty.Tweenable({ fps: FADE_FPS });
+  led.activeTween = new Tweenable({ fps: FADE_FPS });
   led.activeTween.tween({
     from: {
       red:   led.currentRed,

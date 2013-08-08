@@ -441,7 +441,7 @@ var Tweenable = (function () {
 
   if (typeof exports === 'object') {
     // nodejs
-    module.exports.Tweenable = Tweenable;
+    module.exports = Tweenable;
   } else if (typeof define === 'function' && define.amd) {
     // AMD
     define(function () { return Tweenable; });
