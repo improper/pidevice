@@ -2,7 +2,10 @@
 
 RESTful API for various attached hardware devices, based on node.js/express
 
-## PWM LED device
+## RGB LED device
+
+Multiple channels of RGB LEDs/LED stripes connected to three GPIO pins each. Brightness is controlled with PWM,
+provided by [pi-blaster](https://github.com/sarfata/pi-blaster/).
 
 ### Get the list of LED outputs
     curl -i -X GET http://raspberrypi:8000/leds
