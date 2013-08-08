@@ -137,7 +137,7 @@ function processRequest(ledId, req) {
       led.brightness = Math.max(0, Math.min(1, req.body.brightness));
     }
     if (req.body.fadeDuration !== undefined) {
-      led.fadeDuration = Math.max(0, req.body.brightness);
+      led.fadeDuration = Math.max(0, req.body.fadeDuration);
     }
     console.log('fading LED output ' + ledId + ' to RGB (' + led.red + ', ' + led.green + ', ' + led.blue + '), brightness ' + led.brightness);
     fadeLed(ledId);
