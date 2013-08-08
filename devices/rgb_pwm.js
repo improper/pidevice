@@ -1,11 +1,13 @@
 // RGB PWM output
 
-var fs       = require('fs'),
-    // morpheus = require('morpheus'),
+var fs     = require('fs'),
+    shifty = require('../shifty'),
 
-    RED   = 0,
-    GREEN = 1,
-    BLUE  = 2,
+    RED      = 0,
+    GREEN    = 1,
+    BLUE     = 2,
+
+    FADE_FPS = 20,
 
     data  = [
       {
@@ -16,7 +18,7 @@ var fs       = require('fs'),
         "brightness": 1,
         "activeTween": null,
         "currentRed": 0, "currentGreen": 0, "currentBlue": 0,
-        "fadeDuration": 0.5
+        "fadeDuration": 500
       },
       {
         "id": 1,
@@ -26,7 +28,7 @@ var fs       = require('fs'),
         "brightness": 1,
         "activeTween": null,
         "currentRed": 0, "currentGreen": 0, "currentBlue": 0,
-        "fadeDuration": 0.5
+        "fadeDuration": 500
       }
     ],
 
@@ -86,14 +88,39 @@ function hexToRgb(hex) {
 
 function setColour(ledId, component, brightness) {
   pwmWriter.write('' + (ledId * 3 + component) + '=' + brightness.toFixed(3) + "\n");
-  console.log('PWM ' + (ledId * 3 + component) + '=' + brightness.toFixed(3));
+  // console.log('PWM ' + (ledId * 3 + component) + '=' + brightness.toFixed(3));
 }
 
 function fadeLed(ledId) {
   var led = data[ledId];
-  setColour(ledId, RED,   led.red * led.brightness);
-  setColour(ledId, GREEN, led.green * led.brightness);
-  setColour(ledId, BLUE,  led.blue * led.brightness);
+  if (led.activeTween) {
+    led.activeTween.stop();
+  }
+  led.activeTween = new shifty.Tweenable({ fps: FADE_FPS });
+  led.activeTween.tween({
+    from: {
+      red:   led.currentRed,
+      green: led.currentGreen,
+      blue:  led.currentBlue
+    },
+    to: {
+      red:   led.red * led.brightness,
+      green: led.green * led.brightness,
+      blue:  led.blue * led.brightness
+    },
+    duration: led.fadeDuration,
+    step: function(state) {
+      led.currentRed   = state.red;
+      led.currentGreen = state.green;
+      led.currentBlue  = state.blue;
+      setColour(ledId, RED,   state.red);
+      setColour(ledId, GREEN, state.green);
+      setColour(ledId, BLUE,  state.blue);
+    },
+    callback: function() {
+      led.activeTween = null;
+    }
+  });
 }
 
 function processRequest(ledId, req) {
@@ -111,6 +138,7 @@ function processRequest(ledId, req) {
     if (req.body.fadeDuration !== undefined) {
       led.fadeDuration = Math.max(0, req.body.brightness);
     }
+    console.log('fading LED output ' + ledId + ' to RGB (' + led.red + ', ' + led.green + ', ' + led.blue + '), brightness ' + led.brightness);
     fadeLed(ledId);
     return true;
   } else {
