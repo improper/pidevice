@@ -7,7 +7,9 @@
 
 ## Script
 
-    string stdout; 
-    string stderr; 
+    string stdout;
+    string stderr;
+    string colour='"colour": "#ffff00"';
+    string brightness='"brightness": 0.2';
     string url="http://pidevice.fritz.box:8000/leds";
-    system.Exec ("curl -X PUT -H 'Content-Type: application/json' -d '{" # '"' # "colour" # '"' # ": " # '"' # "#ffff00" # '"' # ", " # '"' # "brightness" # '"' # ": 0.2}' " # url, &stdout, &stderr);
+    system.Exec ("curl -X PUT -H 'Content-Type: application/json' -d '{" # colour # ", " # brightness # "}' " # url, &stdout, &stderr);
