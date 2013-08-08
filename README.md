@@ -1,23 +1,20 @@
-pidevice
-========
+# pidevice
 
-## Needs update:
+RESTful API for various attached hardware devices, based on node.js/express
 
-### RESTful API for the rcswitch library based on node.js/express
+## PWM LED device
 
-For further informations and setup instructions please refer to my [blog post](http://blog.codecentric.de/en/2013/03/home-automation-with-angularjs-and-node-js-on-a-raspberry-pi).
+### Get the list of LED outputs
+    curl -i -X GET http://raspberrypi:8000/leds
 
-#### Add a new switch to the configuration
-	curl -i -X POST -H 'Content-Type: application/json' -d '{"id": "0", "url": "/switches/0", "name": "Lamp 1", "script": "sudo /home/pi/rcswitch-pi/sendRev", "command": "B 1", "status": "0"}' http://raspberrypi:8000/switches
+### Set first LED to red
+    curl -i -X PUT -H 'Content-Type: application/json' -d '{"colour": "#ff0000"}' http://raspberrypi:8000/leds/0
 
-#### Get the list of active switches
-	curl -i -X GET http://raspberrypi:8000/switches
+### Set first LED colour to blue, brightness to 50%
+    curl -i -X PUT -H 'Content-Type: application/json' -d '{"colour": "#0000ff", "brightness": 0.5}' http://raspberrypi:8000/leds/0
 
-#### Turn switch on
-	curl -i -X PUT -H 'Content-Type: application/json' -d '{"status": "1"}' http://raspberrypi:8000/switches/0
+### Turn second LED off
+    curl -i -X PUT -H 'Content-Type: application/json' -d '{"brightness": 0}' http://raspberrypi:8000/leds/1
 
-#### Turn switch off
-	curl -i -X PUT -H 'Content-Type: application/json' -d '{"status": "0"}' http://raspberrypi:8000/switches/0
-
-#### Remove switch configuration
-	curl -i -X DELETE http://raspberrypi:8000/switches/0
+### Fade all LEDs to white in 10 seconds
+    curl -i -X PUT -H 'Content-Type: application/json' -d '{"colour": "#ffffff", "brightness": 1, "fadeDuration": 10000}' http://raspberrypi:8000/leds
